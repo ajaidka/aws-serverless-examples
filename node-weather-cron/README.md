@@ -1,4 +1,4 @@
-# AWS Node.JS lambda cron job for Weather (virtually any third part API)
+# AWS Node.JS lambda cron job for Weather (virtually any third party API)
 
 Prerequisites: NodeJS, Serverless 
 
