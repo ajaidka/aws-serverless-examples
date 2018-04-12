@@ -22,7 +22,8 @@ provider:
   runtime: nodejs6.10
 
   environment:
-#   WEATHER_API : "<API_URL>"
+ #  WEATHER_API: "<API_URL>"
+    WEATHER_API: "https://jsonplaceholder.typicode.com/get"
     
 
     
