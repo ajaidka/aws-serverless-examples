@@ -1,22 +1,13 @@
 'use strict';
 
-const myEmail = process.env.EMAIL
-const myDomain = process.env.DOMAIN
-
-const AWS = require('aws-sdk');
-
-const dynamoDb = new AWS.DynamoDB.DocumentClient();
-const ses = new AWS.SES();
-
-async function sendEmail (event) {
-  return await ses.sendEmail(generateEmailParams(event.body)).promise();
-}
+const sesHelper = require('./helper/sesHelper')
+const dynamoDb = require('./helper/dynamoHelper').dynamoDb()
 
 module.exports.send = (event, context, callback) => {
   console.log("body", event.body);
   const data = JSON.parse(event.body);
-  const emailStatus = sendEmail(event);
-  console.log("sendEmail Status: ", emailStatus);
+  sesHelper.sendEmail(event);
+  console.log("sendEmail request sent!");
 
   var params = {
     TableName : process.env.MESSAGE_TABLE,
@@ -70,7 +61,7 @@ module.exports.read = (event, context, callback) => {
       callback(null, {
         statusCode: error.statusCode || 501,
         headers: { 'Content-Type': 'text/plain' },
-        body: 'Couldn\'t fetch the messages.' + error,
+        body: 'Couldn\'t fetch the messages. ' + error,
       });
       return;
     }
@@ -84,29 +75,3 @@ module.exports.read = (event, context, callback) => {
 
   });
 };
-
-function generateEmailParams (emailParameters) {
-  const { toEmail, subject, bodyText } = JSON.parse(emailParameters)
-  console.log("In generateEmailParams:", toEmail, subject, emailParameters)
-  if (!(toEmail && subject && emailParameters)) {
-    throw new Error('Missing parameters! Make sure to add parameters \'toEmail\', \'subject\', \'bodyText\'.')
-  }
-  return {
-    Source: myEmail,
-    Destination: { ToAddresses: [myEmail] },
-    ReplyToAddresses: [toEmail],
-    Message: {
-      Body: {
-        Text: {
-          Charset: 'UTF-8',
-          Data: `Message sent from email ${toEmail} \nContent: ${bodyText}`
-        }
-      },
-      Subject: {
-        Charset: 'UTF-8',
-        Data: `${subject}! `
-      }
-    }
-  }
-}
-

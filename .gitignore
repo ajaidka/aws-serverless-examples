@@ -58,3 +58,5 @@ typings/
 .env
 
 node-express-serverless/.serverless
+package-lock.json
+node-message-sender/.dynamodb
