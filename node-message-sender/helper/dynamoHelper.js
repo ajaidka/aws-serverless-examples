@@ -14,6 +14,17 @@ function getDynamoDb () {
     return dynamoDb;
 }
 
+
+var call = (action, params) => {
+  return dynamoDb[action](params).promise();
+};
+
+module.exports.query = (params) => {
+  return call('query', params);
+}
+
+
 module.exports.dynamoDb = getDynamoDb;
+module.exports.call = call;
 
 

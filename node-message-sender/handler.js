@@ -1,6 +1,7 @@
 'use strict';
 
 const sesHelper = require('./helper/sesHelper')
+const dynamoHelper = require('./helper/dynamoHelper');
 const dynamoDb = require('./helper/dynamoHelper').dynamoDb()
 
 module.exports.send = (event, context, callback) => {
@@ -42,7 +43,40 @@ module.exports.send = (event, context, callback) => {
 
 };
 
-module.exports.read = (event, context, callback) => {
+module.exports.read = async (event, context) => {
+  
+  var params = {
+    TableName: process.env.MESSAGE_TABLE,
+    KeyConditionExpression: 'toEmail = :toEmail',
+    ExpressionAttributeValues: {
+      ':toEmail': event.pathParameters.toEmail,
+    }
+  };
+  
+
+  try{
+    
+    var result = await dynamoHelper.query(params);
+
+  }catch(error){
+    console.error(error);
+      const response = {
+        statusCode: error.statusCode || 501,
+        headers: { 'Content-Type': 'text/plain' },
+        body: 'Couldn\'t fetch the messages. ' + error,
+      };
+      return response;
+    }
+    
+    // create a response
+    const response = {
+      statusCode: 200,
+      body: JSON.stringify(result.Items),
+    };
+    return response;
+  }
+
+/*module.exports.read = (event, context, callback) => {
   
   var params = {
     TableName: process.env.MESSAGE_TABLE,
@@ -62,7 +96,7 @@ module.exports.read = (event, context, callback) => {
         statusCode: error.statusCode || 501,
         headers: { 'Content-Type': 'text/plain' },
         body: 'Couldn\'t fetch the messages. ' + error,
-      });
+      }).prom;
       return;
     }
 
@@ -74,4 +108,36 @@ module.exports.read = (event, context, callback) => {
     callback(null, response);
 
   });
-};
+};*/
+
+function squareOfNumberAfter2Seconds(number) {
+  return new Promise((resolve) => {
+      setTimeout(() => {
+          resolve(number * number)
+      }, 2000)
+  })
+}
+async function calculate() {
+  try {
+      let responseOne = await squareOfNumberAfter2Seconds(10);
+      let responseTwo = await squareOfNumberAfter2Seconds(20);
+      let responseThree = await squareOfNumberAfter2Seconds(40);
+      return responseOne + responseTwo + responseThree;
+  }
+  catch(error) {
+      return error;
+  }
+}
+// Noticeable change in function parameters, there is no callback
+module.exports.calculateAsync = async (event) => {
+  let calculationResult = await calculate();
+  const response = {
+    statusCode: 200,
+    body: JSON.stringify({
+      'calculationResult': calculationResult,
+    },
+  )};
+  return response;
+}
+
+

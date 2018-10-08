@@ -5,15 +5,15 @@
   "main": "handler.js",
   "scripts": {
     "start": "./node_modules/.bin/serverless offline -s dev",
-    "debug": "export SLS_DEBUG=* && node --inspect ./node_modules/.bin/serverless offline -s dev",
+    "debug": "export SLS_DEBUG=* && node --inspect=4000 ./node_modules/.bin/serverless offline -s dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "ajaidka",
   "license": "ISC",
   "devDependencies": {
     "serverless": "^1.32.0",
-    "serverless-offline": "^3.25.17",
-    "serverless-dynamodb-local": "^0.2.35"
+    "serverless-dynamodb-local": "^0.2.35",
+    "serverless-offline": "^3.25.17"
   },
   "dependencies": {
     "aws-sdk": "^2.325.0"

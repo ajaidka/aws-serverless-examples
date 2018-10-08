@@ -1,0 +1,1 @@
+sls dynamodb start --migrate
