@@ -1,0 +1,50 @@
+#service: aj-demo-react-app
+service: ${self:custom.serviceName}
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  region: us-east-1
+
+custom:
+  serviceName: ${env:appname}
+  bucketName: ${env:appname}
+
+package:
+  exclude:
+    - ./**
+
+resources:
+  Resources:
+    StaticWebsiteBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.bucketName}
+        WebsiteConfiguration:
+          IndexDocument: index.html
+    StaticWebsiteBucketPolicy: 
+      Type: AWS::S3::BucketPolicy
+      Properties: 
+        Bucket:
+          Ref: "StaticWebsiteBucket"
+        PolicyDocument:
+          Statement:
+            -
+              Effect: "Allow"
+              Principal: "*"
+              Action:
+                - "s3:GetObject"
+              Resource:
+                Fn::Join:
+                  - ""
+                  - 
+                    - "arn:aws:s3:::"
+                    - 
+                      Ref: "StaticWebsiteBucket"
+                    - "/*"
+
+  Outputs:
+    StaticWebsiteBucketURL:
+      Description: "Static Website Bucket URL"
+      Value: 
+        "Fn::GetAtt": [ StaticWebsiteBucket, WebsiteURL ]
