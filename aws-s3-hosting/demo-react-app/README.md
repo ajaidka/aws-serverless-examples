@@ -19,9 +19,9 @@ Set service/app name as an Enviroment variable, it will be used to create cloud 
 #### 2. Provision s3 public bucket and its policies
 `sls deploy`
 
-This will create the AWS cloudformation stack in your account, please check serverless.yml for details.
+This will create the AWS cloudformation stack in your account, please check serverless.yml for details
 
-#### 3. Grab the endpoint of newly created bucket
+#### 3. Grab the endpoint of newly created s3 bucket
 `sls info --verbose`
 
 Output: 
@@ -31,14 +31,15 @@ StaticWebsiteBucketURL: http://your-demo-react-app.s3-website-us-east-1.amazonaw
 
 #### 4. Set bucket name
 In package.json replace bucket name under script -> deploy
-e,g "deploy": "aws s3 sync build/ s3://your-demo-react-app --delete"
+e.g "deploy": "aws s3 sync build/ s3://your-demo-react-app --delete"
 
 #### 5. deploy the application 
 `npm run deploy`
 
-Now build the production ready reactjs code and deploy 
+This will build the production ready reactjs code and deploy, check predeploy and postdeploy scripts in package.json
 
-**Note: Next time you just need to do `npm run deploy` in order to deplay your application on s3.
+
+**Note: Next time you just need to do `npm run deploy` in order to deploy your application on s3. One more thing we can do it tie this bucket to CloudFront service and Route53 domains. Will cover this in next revision
 **
 
 # Enjoy!
